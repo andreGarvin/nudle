@@ -1,7 +1,3 @@
-// marenee74
-
-var tag = [];
-
 $(document).ready(function() {
 
 	$('#post').click(function() {
