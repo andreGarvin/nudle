@@ -1,0 +1,119 @@
+.navbar-clear {
+	border-bottom: 1px solid #e7e7e7;
+	background-color: #fff;
+	border-radius: 1px;
+	margin-bottom: 0px;
+}
+
+h1 a {
+	color: #333;
+}
+
+h1 a:hover {
+	text-decoration: none;
+}
+
+.searchBx {
+	border-left: 1px solid #eee;
+	float: right;
+	padding: 20px;
+}
+
+#post {
+	margin-top: 20px;
+	float: right;
+}
+
+.mainContainer {
+	margin: 110px 20px 20px 20px;
+	border-right: 1px solid #eee;
+	border-left: 1px solid #eee;
+	background-color: #fff;
+	border-radius: 2px;
+	padding: 15px;
+}
+
+.bin {
+	border: 1px solid #ddd;
+	border-radius: 2px;
+	margin: 20px;
+	padding: 10px;
+}
+.bin p a {
+	margin-bottom: 8px;
+	float: right;
+}
+
+.bin ul {
+	float: left;
+}
+
+.bin li {
+	margin-left: 5px;
+	cursor: pointer;
+	display: inline;
+	color: #0071e0;
+}
+
+/*
+
+.bin-img {}
+.bin-header {}
+.bin-text {}
+
+*/
+
+.bin-tags {
+	border-top: 1px solid #ddd;
+	padding: 10px;
+}
+.bin-tags p a {
+	float: left;
+}
+
+
+.nudler-username {
+	text-indent: 30px;
+}
+
+
+#tmpl-bin {
+	display: none;
+}
+
+#tmpl-bin input {
+	margin-top: 20px;
+}
+
+#tmpl-bin textarea {
+	margin-top: 20px;
+	float: right;
+}
+
+#article {
+	float: right;
+}
+
+#tmpl-bin button {
+	margin: 20px 20px 10px 0px;
+	float: right;
+}
+
+.error_message p {
+	marign: 150px;
+}
+
+.mk-nudle {
+	text-decoration: none;
+	cursor: pointer;
+	color: #337ab7;
+}
+
+.mk-nudle:hover {
+	text-decoration: underline;
+}
+
+.footer {
+	background-color: #eee;
+	padding: 20px;
+}

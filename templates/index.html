@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Nudle</title>
+		
+		<link rel="icon" href="{{ url_for('static', filename='nudle_logo.gif') }}" />
+		
+		<link rel="stylesheet" href="{{ url_for('static', filename='Bootstrap.css') }}" />
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}" />
+	</head>
+	<body>
+
+		<div class="navbar navbar-clear  navbar-fixed-top">
+			<h1 class='col-md-2 col-xs-2'> <a href="/nudle"> Nudle </a> </h1>
+
+			<div class="searchBx col-md-3 col-xs-5">
+				<input id='query' type='text' class="form-control" placeholder="n/search" />
+			</div>
+		</div>
+
+		<div class='mainContainer'>
+			
+		{% if n_act == 'article' %}
+			
+			<div class='container conatiner-fluid blog-post'>
+				<h1 class="blog-title"> {{ nudle.title }} </h1>
+				<p class="nudler-username lead blog-description"> {{ nudle.article.nudler }} <p class="blog-post-meta">{{ nudle.article.data.date }}; {{ nudle.article.data.time }}</p> </p>
+
+				<div class="artcile-content blog-main container">
+					<p class='lead'> {{ nudle.article.text }} </p>
+				</div>
+			</div>
+		
+		{% elif n_act == 'no_nudle' %}
+			
+			<div class='error-message container conatiner-fluid'>
+				<div class="col-md-4 col-xs-12">
+					<h2>Error:<p class='lead'> {{ error_message }} </p></h2>
+					<p class='mk-nudle'>Make a nudle</p>
+				</div>
+
+				<div style='float: right;' id="tmpl-bin" class="bin col-md-6 col-xs-12">
+					<h3> Post a nudle </h3>
+
+					<div class='col-md-4 col-xs-4'>
+						<input id='pic' type='text' class="form-control" placeholder="Cover photo" />
+						<input id='title' type='text' class="form-control" placeholder="Title" />
+						<input id='description' type='text' class="form-control" placeholder="Description" />
+					</div>
+
+					<div class='col-md-8 col-xs-8'>
+						<textarea id='article' class="form-control" rows='7' placeholder="article" ></textarea>
+						
+						<div style='float: left'>
+							<h3>tag:</h3>
+							<p id='formatted-tag' class='lead'><a href="{{ req }}">/{{ req }}</a></p>
+						</div>
+						
+					</div>
+
+					<div class="col-md-12 col-xs-12">
+						<button id='bin-exit' class="btn btn-danger">exit</button>
+						<button id='bin-post' class="btn btn-default">post</button>
+					</div>
+				</div>
+			</div>
+
+
+		{% else %}
+			<div class="page-header">
+  				<h1> n/{{ header }} <small>total: {{ resp.len }}</small></h1>
+			</div>
+			
+			<button id='post' class="btn btn-default">post a nudle</button>
+
+			<div id="tmpl-bin" class="bin col-md-5 col-xs-9">
+				<h3> Post a nudle </h3>
+
+				<div class='col-md-4 col-xs-4'>
+					<input id='pic' type='text' class="form-control" placeholder="Cover photo" />
+					<input id='title' type='text' class="form-control" placeholder="Title" />
+					<input id='description' type='text' class="form-control" placeholder="Description" />
+				</div>
+
+				<div class='col-md-8 col-xs-8'>
+					<textarea id='article' class="form-control" rows='7' placeholder="article" ></textarea>
+
+					<input id='tag' type="text" class="form-control col-md-4 col-xs-5" placeholder="tag" />
+					<button id='add-Tag' class="btn btn-default">add</button>
+					
+					<span style='display: none;' id='tag-bin' class='bin col-md-5 col-xs-6'></span>
+				</div>
+
+				<div class="col-md-12 col-xs-12">
+					<button id='bin-exit' class="btn btn-danger">exit</button>
+					<button id='bin-post' class="btn btn-default">post</button>
+				</div>
+			</div>
+
+			{% for bin in resp.results %}
+				<div class="bin thumbnail col-md-3 col-xs-6 row">
+					<img class="bin-img img-thumbnail" src='{{ bin.pic }}' />
+					<div class="caption">
+    					<h3> {{ bin.title }} </h3>
+    					<blockquote>
+  							<p> {{ bin.info }} </p>
+						</blockquote>
+
+						<p style='float: right;' class='col-md-8 col-xs-5 row'>
+    						<a href="{{ bin['nudle-url'] }}" class="btn btn-default" role="button">read</a>
+    					</p>
+
+    					<ul class='col-md-12 col-xs-5 row'>
+    						<li class='col-md-12 col-xs-5 row'> forks: {{ bin.forks }} </li>
+							<li class='col-md-12 col-xs-5 row'> Comments: {{ bin.comments }} </li>
+						</ul>
+
+    					<div class='bin-tags col-md-12 col-xs-12'>
+        					{% for tag in bin['nudle-tags'] %}
+        						<p>
+        							<a href='/nudle/{{ tag }}'> /{{ tag }} </a>
+        						</p>
+        					{% endfor %}
+        				</div>
+  					</div>
+				</div>
+			{% endfor %}
+
+		{% endif %}
+		</div>
+
+
+
+		<footer class="col-md-12 col-xs-12 footer">
+			<p>@nudle</p>
+		</footer>
+
+		<script src="{{ url_for('static', filename='jQuery.js') }}"></script>
+		<script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
+	</body>
+</html>
