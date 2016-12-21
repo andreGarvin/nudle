@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Nudle</title>
+        <link rel="icon" href="{{ url_for('static', filename='nudle_logo.gif') }}" />
+		
+		<link rel="stylesheet" href="{{ url_for('static', filename='Bootstrap.css') }}" />
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}" />
+    </head>
+    <body>
+        
+        <div class="navbar navbar-clear navbar-fixed-top">
+			<h1 class='col-md-2 col-xs-2'> <a href="/nudle"> Nudle </a> </h1>
+
+			<div class="searchBx col-md-3 col-xs-5">
+				<input id='query' type='text' class="form-control" placeholder="n/search" />
+			</div>
+		</div>
+		
+		<div class='mainContainer'>
+			<div class='error-message container conatiner-fluid'>
+					<div class="col-md-4 col-xs-12">
+						<h2>Error:<p class='lead'> {{ error_message }} </p></h2>
+						<p class='mk-nudle col-md-5 col-xs-5'>Make a nudle</p>
+					</div>
+
+					<div style='float: right;' id="tmpl-bin" class="bin col-md-6 col-xs-12">
+						<h3> Post a nudle </h3>
+
+						<div class='col-md-4 col-xs-4'>
+							<input id='pic' type='text' class="form-control" placeholder="Cover photo" />
+							<input id='title' type='text' class="form-control" placeholder="Title" />
+							<input id='description' type='text' class="form-control" placeholder="Description" />
+						</div>
+
+						<div class='col-md-8 col-xs-8'>
+							<textarea id='article' class="form-control" rows='7' placeholder="article" ></textarea>
+							
+							<div style='float: left'>
+								<h3>tag:</h3>
+								<p id='formatted-tag' class='lead'><a href="{{ req }}">/{{ req }}</a></p>
+							</div>
+						
+						</div>
+
+						<div class="col-md-12 col-xs-12">
+							<button id='bin-exit' class="btn btn-danger">exit</button>
+							<button id='bin-post' class="btn btn-default">post</button>
+						</div>
+					</div>
+				</div>
+		</div>
+		
+		<footer class="col-md-12 col-xs-12 footer">
+			<p>@nudle</p>
+		</footer>
+
+		<script src="{{ url_for('static', filename='jQuery.js') }}"></script>
+		<script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
+    </body>
+</html>
