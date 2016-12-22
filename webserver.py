@@ -3,16 +3,7 @@ from pymongo import MongoClient
 import datetime
 import os
 
-
-# list of users
-# users = [
-# 	{'username': 'andreGarvin', 'password': 'Iam_Star', 'img': 'http://ericandre.com/fun/stop/images/clickhead1.gif'}
-# ]
-
-
 app = Flask(__name__)
-
-
 #  the cookie encrytion
 app.secret_key = os.urandom(24)
 

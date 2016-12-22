@@ -11,6 +11,9 @@
 			.login-btn {
 				margin-top: 20px;
 			}
+			#userName {
+				margin-top: 20px;
+			}
 		</style>
 	</head>
 	<body>
@@ -23,9 +26,9 @@
 					<a href='/nudle/Oauth/join' class="btn btn-default pull-right login-btn" type='button'>login</a>
 				</div>
 			{% else %}
-				<div class="col-md-3 col-xs-3 pull-right">
-					<p>{{ resp['acc'] }}</p>
-					<a href="/nudle/Oauth/drop" class="btn btn-default login-btn" type='button'>logout</a>
+				<div class="col-md-1 col-xs-1 pull-right">
+					<p id='userName'>{{ resp['acc'] }}</p>
+					<!--<a href="/nudle/Oauth/drop" class="btn btn-default login-btn" type='button'>logout</a>-->
 					<!--<img src="{{ resp['acc'] }}" />-->
 				</div>
 			{% endif %}
