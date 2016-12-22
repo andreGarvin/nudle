@@ -1,3 +1,12 @@
+function getFormattedDate() {
+	var date = new Date();
+	var str = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+	
+	return str;
+}
+
+console.log('Welcome to nudle: ' + getFormattedDate().split(' ')[0] );
+
 $(document).ready(function() {
 
 	$('#post').click(function() {
@@ -69,5 +78,9 @@ $(document).ready(function() {
 			});
 		}
 	});
+	
+	// $('#fork').click(function() {
+	// 	docmuemntparseInt( $('#fork').html().split()[2] );
+	// });
 
 });

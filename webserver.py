@@ -1,49 +1,83 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, session, render_template, redirect, request, g, url_for, jsonify
 from pymongo import MongoClient
+import datetime
 import os
+
+
+# list of users
+# users = [
+# 	{'username': 'andreGarvin', 'password': 'Iam_Star', 'img': 'http://ericandre.com/fun/stop/images/clickhead1.gif'}
+# ]
+
 
 app = Flask(__name__)
 
+
+#  the cookie encrytion
+app.secret_key = os.urandom(24)
+
+# connection to monogodb 
 client = MongoClient('localhost', 27017)
 db = client.nudle_db
 
+# checks to see if the user is logged in or is on a session
+@app.before_request
+def before_request():
+	
+	# makes a global variable	
+	g.user = None
+
+	# the checks to see if a user is in session
+	if 'user' in session:
+
+		# if not makes the session avriable to gloabl user variable
+		g.user = session['user']
+
+
 
 def collect_dbData( arg ):
+	
+	
 	resp_data = {
 		'req': arg,
+		'header': '',
 		'results': [],
 		'len': 0,
-		'status': None
+		'status': None,
+		'acc': g.user
 	}
 	
+	# getting all nudles in db
 	if arg['req'] == 'get-all':
 
 		for i in db.nudles.find():
-			resp_data['results'].append({ 'title': i['title'], 'forks': i['article']['data']['forks'], 'comments': i['article']['data']['comments'], 'shares': i['article']['data']['shares'], 'pic': i['article']['data']['pic'], 'info': i['info'], 'nudle-url': '/nudle/search?q=' + i['title'], 'nudle-tags': i['nudle-tags'] })
+			resp_data['results'].append({ 'title': i['title'], 'forks': int( i['article']['data']['forks'] ), 'comments': int( i['article']['data']['comments'] ), 'shares': int( i['article']['data']['shares'] ), 'pic': i['article']['data']['pic'], 'info': i['info'], 'nudle-url': '/nudle/search?q=' + i['title'], 'nudle-tags': i['nudle-tags'] })
 			resp_data['len']+=1
-
-		return render_template('index.html', n_act='newsFeed', header='Global', resp=resp_data )
+		
+		resp_data['header'] = 'Global'
+		
+		return resp_data
  	
+ 	# getting a groups of ndules with certain tag in db
 	elif arg['req'] == 'get-tag':
 
 		for i in db.nudles.find({ 'nudle-tags': arg['tag'] }):
-			resp_data['results'].append({ 'title': i['title'], 'forks': i['article']['data']['forks'], 'comments': i['article']['data']['comments'], 'shares': i['article']['data']['shares'], 'pic': i['article']['data']['pic'], 'info': i['info'], 'nudle-url': '/nudle/search?q=' + i['title'], 'nudle-tags': i['nudle-tags'] })
+			resp_data['results'].append({ 'title': i['title'], 'forks': int( i['article']['data']['forks'] ), 'comments': int( i['article']['data']['comments'] ), 'shares': int( i['article']['data']['shares'] ), 'pic': i['article']['data']['pic'], 'info': i['info'], 'nudle-url': '/nudle/search?q=' + i['title'], 'nudle-tags': i['nudle-tags'] })
 			resp_data['len']+=1
 		
-		if resp_data['len'] == 0:
-			return render_template('index.html', n_act='no_nudle', error_message="nudle tag not found for '" + arg['tag'] + "'.", req=arg['tag'])
-		
-		return render_template('index.html', n_act='newsFeed', header=arg['tag'], resp=resp_data )	
+		return resp_data
 
+	# searching for a nudle in the db with the title
 	elif arg['req'] == 'get-title':
 
 		for j in db.nudles.find({'title': arg['title']}):
-			return render_template('index.html', n_act='article', nudle=j)
+			# if j['title'].lower()[0:len(arg['title'])] == arg['title'].lower():
+			return render_template('nudle.html', nudle=j)
 
-		return render_template('index.html', n_act='no_nudle', error_message="nudle post not found for '" + arg['title'] + "'.", req=arg['title'])
+		return render_template('nudle_error.html', error_message="nudle post not found for '" + arg['title'] + "'.", req=arg['title'])
 
 
-
+# posting new nudle in db
 def POST_to_db( arg ):
 
 	if arg['req'] == 'insert-new_nudle':
@@ -52,14 +86,14 @@ def POST_to_db( arg ):
 		return jsonify({ 'url_path': '/nudle/search?q=' + arg['nudle-tag'] })
 
 
-# <!-- col-sm-3 col-sm-offset-1 blog-sidebar -->
-
-
+# gets newsfeed
 @app.route('/nudle')
-def home():
-	return collect_dbData({ 'req': 'get-all' })
+def newsfeed():
+	
+	return render_template('newsfeed.html', header='Global', resp=collect_dbData({ 'req': 'get-all' }) )
 
 
+# gets tags
 @app.route('/nudle/<tag>')
 def GET_tags( tag ):
 
@@ -68,9 +102,14 @@ def GET_tags( tag ):
 	if meta_data == 'form-box':
 		return jsonify({ 'url_path': '/nudle/'+tag })
 
-	return collect_dbData({ 'req': 'get-tag', 'tag': tag })
+	results = collect_dbData({ 'req': 'get-tag', 'tag': tag })
+	
+	if results['len'] == 0:
+		return render_template('nudle_error.html', error_message="nudle tag not found for '" + tag + "'.", req=tag )
+		
+	return render_template('newsfeed.html', header=tag, resp=results )	
 
-
+# gets nudle
 @app.route('/nudle/search')
 def search_for_nudelpost():
 	title = request.args.get('q')
@@ -78,9 +117,10 @@ def search_for_nudelpost():
 	return collect_dbData({ 'req': 'get-title', 'title': title })
 
 
+# posts nudle
 @app.route('/nudle/post_nudle/')
 def POST_nudle():
-
+	today = datetime.date.today()
 
 	new_nudle = {
 		'title': request.args.get('ttl'),
@@ -90,8 +130,8 @@ def POST_nudle():
 			'text': request.args.get('text'),
 			'data': {
 				'pic': request.args.get('coverPhoto'),
-				'date': '12/5/2016',
-				'time': '7:40 pm',
+				'date': str( today.ctime() ).split(' ')[0] +' '+ str( today.ctime() ).split(' ')[1] +': '+ int( str( today ).split('-')[1] ) - 1 +' , '+ str( today.ctime() ).split(' ')[4] ,
+				'time': str( datetime.time() ),
 				'forks': 0,
 				'comments': 0,
 				'shares': 0
@@ -99,10 +139,56 @@ def POST_nudle():
 		},
 		'nudle-tags': [ request.args.get('tag') ]
 	}
-
+	
 	POST_to_db({ 'data': new_nudle, 'req': 'insert-new_nudle', 'nudle-tag': str( new_nudle['nudle-tags'] ) })
 	
 	return jsonify({ 'url_path': '/nudle/search/' + new_nudle['title'] })
 
+
+# login/Oauth page
+@app.route('/nudle/Oauth/join', methods=['GET', 'POST'])
+def nudleOauth():
+	
+	# checking if the duser is logged in 
+	if g.user:
+		return redirect( url_for('newsfeed') )
+
+	# getting the user username and password
+	elif request.method == 'POST':
+		
+
+		username = request.form['username']
+		password = request.form['password']
+
+		# # takes thhe user off the session
+		session.pop('user', None)
+
+		# iterating over user accounts
+		for i in db.nudlers.find():
+			print( i )
+			# checking id the username exist
+			if i['username'] == username:
+
+				# checking if password exist
+				if i['password'] == password:
+
+					# making a session for the user
+					session['user'] = username
+					
+					# redireccting to the user to newsfeed.html
+					return redirect( url_for('newsfeed') )
+	
+	# else if anythonggoes go wrong then redircet them aback to the sigin/ login page
+	return render_template('Oauth.html')
+
+# drops sessions made by the user or logout of the account
+@app.route('/nudle/Oauth/drop')
+def dropsession():
+		
+	# drops session 
+	session.pop('user', None)
+	
+	# redirects the to the home page
+	return redirect( url_for('newsfeed') )
 
 app.run(host=os.getenv('IP', 'localhost'), port=int(os.getenv('PORT', 3000)),debug=True)
