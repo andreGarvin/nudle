@@ -66,6 +66,19 @@ def collect_dbData( arg ):
 			return render_template('nudle.html', nudle=j)
 
 		return render_template('nudle_error.html', error_message="nudle post not found for '" + arg['title'] + "'.", req=arg['title'])
+    
+    # elif arg['req'] == 'grab':
+    	# results = {
+		#  		'nudles': [],
+		#  		'tags': []
+		#  	}
+    	
+		#  	for ns, nt in zip( db.nudles.find({'title': arg['req-data']}), db.nudles.find({'tag': arg['req-data']}) ) :
+		# 	results.append({ 'type': 'story', 'title': ns['title'], 'forks': int( ns['article']['data']['forks'] ), 'comments': int( ns['article']['data']['comments'] ), 'shares': int( ns['article']['data']['shares'] ), 'pic': ns['article']['data']['pic'], 'info': ns['info'], 'nudle-url': '/nudle/search?q=' + ns['title'], 'nudle-tags': ns['nudle-tags'] })
+		# 	results.append({ 'type': 'tag', 'title': nt['title'], 'forks': int( nt['article']['data']['forks'] ), 'comments': int( nt['article']['data']['comments'] ), 'shares': int( nt['article']['data']['shares'] ), 'pic': nt['article']['data']['pic'], 'info': nt['info'], 'nudle-url': '/nudle/search?q=' + nt['title'], 'nudle-tags': i['nudle-tags'] })
+		
+		
+		# return jsonify({ 'results': results, 'req-data': arg['req-data'], 'len': int( results )  })
 
 
 # posting new nudle in db
@@ -106,6 +119,14 @@ def search_for_nudelpost():
 	title = request.args.get('q')
 	
 	return collect_dbData({ 'req': 'get-title', 'title': title })
+
+
+@app.route('/nudle/search/advanced')
+def advancedSearch():
+	
+	req = request.args.get('q')
+	
+	return collect_dbData({ 'req': 'grab', 'req-data': req })
 
 
 # posts nudle
